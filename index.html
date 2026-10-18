@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>JARVIS AI</title>
+<style>
+:root{color-scheme:dark;--bg:#07111f;--panel:#0e1d30;--cyan:#55e7ff;--text:#eaf8ff;--muted:#9bb5c9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#12334a,var(--bg) 55%);color:var(--text);font-family:system-ui,Arial,sans-serif;min-height:100vh}
+header{padding:22px 18px 12px;text-align:center} .orb{width:76px;height:76px;border:2px solid var(--cyan);border-radius:50%;margin:0 auto 12px;box-shadow:0 0 25px #55e7ff66,inset 0 0 20px #55e7ff33;display:grid;place-items:center;font-size:30px;color:var(--cyan)}
+h1{margin:0;letter-spacing:5px;font-size:25px}header p{margin:6px 0;color:var(--muted);font-size:13px}
+main{max-width:850px;margin:auto;padding:12px 14px 24px}.status{color:var(--cyan);font-size:12px;text-align:center;margin:6px 0 14px}
+#chat{height:37vh;min-height:230px;overflow:auto;background:#081522cc;border:1px solid #24455b;border-radius:16px;padding:14px}
+.msg{padding:11px 13px;border-radius:12px;margin:8px 0;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.bot{background:#11283b;border:1px solid #23475b}.user{background:#123b4a;border:1px solid #2a7787;margin-left:10%}
+form{display:flex;gap:8px;margin:12px 0}input{min-width:0;flex:1;background:#0c1c2b;color:white;border:1px solid #2d5267;border-radius:12px;padding:14px;font-size:16px}button{border:1px solid #3b7186;border-radius:12px;background:#102d40;color:var(--text);padding:12px 14px;font-size:14px;font-weight:650}button.primary{background:#0e7184;border-color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid button{min-height:54px}footer{text-align:center;color:var(--muted);font-size:11px;margin-top:16px}
+@media(min-width:700px){#chat{height:42vh}.grid{grid-template-columns:repeat(5,1fr)}}
+</style></head>
+<body>
+<header><div class="orb">✦</div><h1>J.A.R.V.I.S.</h1><p>JUST A RATHER VERY INTELLIGENT SYSTEM</p></header>
+<main><div class="status" id="status">SYSTEM ONLINE · LOCAL DEMO MODE</div>
+<div id="chat" aria-live="polite"><div class="msg bot">Hello. I am JARVIS. You can type a message, use the microphone, or ask me to open an app.</div></div>
+<form id="form"><input id="input" autocomplete="off" placeholder="Ask JARVIS something…" aria-label="Message"><button class="primary" type="submit">Send</button></form>
+<div class="grid">
+<button onclick="listen()">🎙️ Voice</button><button onclick="openApp('whatsapp')">WhatsApp</button><button onclick="openApp('instagram')">Instagram</button><button onclick="openApp('snapchat')">Snapchat</button><button onclick="openApp('phone')">📞 Phone</button>
+</div><footer>Starter build · AI backend not connected yet · DMs are not accessed</footer></main>
+<script>
+const chat=document.getElementById('chat'),input=document.getElementById('input'),statusEl=document.getElementById('status');
+function add(text,who){let d=document.createElement('div');d.className='msg '+who;d.textContent=text;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+function speak(t){if(window.JarvisAndroid&&JarvisAndroid.speak)JarvisAndroid.speak(t);else if('speechSynthesis'in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))}}
+function listen(){if(window.JarvisAndroid&&JarvisAndroid.listen)JarvisAndroid.listen();else {statusEl.textContent='Use this feature in the Android app build'}}
+function openApp(app){if(window.JarvisAndroid&&JarvisAndroid.openApp)JarvisAndroid.openApp(app);else add('App shortcuts work in the Android app.','bot')}
+window.onVoiceResult=function(text){input.value=text;document.getElementById('form').requestSubmit()}
+function respond(t){
+let s=t.toLowerCase(),r;
+if(s.includes('open whatsapp')){openApp('whatsapp');r='Opening WhatsApp if installed.'}
+else if(s.includes('open instagram')){openApp('instagram');r='Opening Instagram if installed.'}
+else if(s.includes('open snapchat')){openApp('snapchat');r='Opening Snapchat if installed.'}
+else if(s.includes('open phone')||s.includes('make a call')){openApp('phone');r='Opening the phone dialer. You can choose a contact and place the call.'}
+else if(s.includes('hello')||s.includes('hi jarvis'))r='Hello! I am online. What can I help you with?'
+else if(s.includes('your name'))r='I am JARVIS, your personal assistant starter app.'
+else r='I received: "'+t+'". This starter is in demo mode; connect a secure AI backend to enable intelligent answers. I can open supported apps using commands like “open WhatsApp”.';
+add(r,'bot');speak(r)
+}
+document.getElementById('form').addEventListener('submit',e=>{e.preventDefault();let t=input.value.trim();if(!t)return;add(t,'user');input.value='';respond(t)});
+</script></body></html>
